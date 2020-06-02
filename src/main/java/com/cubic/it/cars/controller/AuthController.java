@@ -7,7 +7,11 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,10 +24,17 @@ public class AuthController {
 	
 	
 	
-	
 	@GetMapping({"/dasha"})
 	public String dashaBoard() {
 		return "dasha";
+	}
+	
+	
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+		//killing the session
+		session.invalidate();
+		return "login";
 	}
 	
 	@GetMapping({"/auth","/"})
@@ -32,7 +43,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/auth")
-	public String authPagePost(HttpServletRequest req) {
+	public String authPagePost(HttpServletRequest req,HttpSession session) {
 		String username=req.getParameter("username");
 		String password=req.getParameter("password");
 		UserEntity entity=null;
@@ -70,6 +81,8 @@ public class AuthController {
 				   entity.setCreateDate(doe);
 				   entity.setRole(role);
 				   req.setAttribute("pdata", entity);
+				   //Why I am adding this data into session
+				   session.setAttribute("userData", entity);
 				   //Here we are adding this data to show on review page
 				   //Creatign session scope for the user
 				   //CTR-SHIFT+O

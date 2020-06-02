@@ -38,7 +38,8 @@
 	     <hr style="border-top: 5px solid rgba(103,58,183,1);"/>
 	      <h3>${message }</h3>
 		<img id="studentImage"  src="${pageContext.request.contextPath}/img/bmw-z4.png" class="semere"  style="height: 100px;">
-		<form name="carForm" action="${pageContext.request.contextPath}/addCar" method="post">
+		<form name="carForm" action="${pageContext.request.contextPath}/addCar" method="post"  
+		enctype="multipart/form-data">
 		<div  class="semere"   style="width: 50%">
 		 			<br/>
 		            <label for="color" >Color</label>

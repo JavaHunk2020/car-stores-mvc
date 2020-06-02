@@ -2,17 +2,37 @@ package com.cubic.it.cars.entity;
 
 import java.sql.Timestamp;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class CarEntity {
 
 	private int id;
+	private MultipartFile photo;
 	private String color;
+	private String filename;
 	private int model;
 	private double price;
 	private String mfg;
 	private String description;
-	private byte[] photo;
+	private byte[] image;
 	private Timestamp doe;
 	private Timestamp dom;
+
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	public MultipartFile getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(MultipartFile photo) {
+		this.photo = photo;
+	}
 
 	public int getId() {
 		return id;
@@ -62,12 +82,12 @@ public class CarEntity {
 		this.description = description;
 	}
 
-	public byte[] getPhoto() {
-		return photo;
+	public byte[] getImage() {
+		return image;
 	}
 
-	public void setPhoto(byte[] photo) {
-		this.photo = photo;
+	public void setImage(byte[] image) {
+		this.image = image;
 	}
 
 	public Timestamp getDoe() {

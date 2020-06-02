@@ -28,7 +28,13 @@
 	<header style="background-color: #03a9f4; height: 30px;"> </header>
 
 	<div class="container">
-		<img src="${pageContext.request.contextPath}/img/ccar.png">
+	
+	    <p style="font-size: 18px;">Hello , <b>${sessionScope.userData.name}</b> , Email , <b>${sessionScope.userData.email}</b></p>
+	    <hr/>
+		<img src="${pageContext.request.contextPath}/img/car.jpg"  style="height:180px;"> 
+		<a href="${pageContext.request.contextPath}/logout">
+		  <img src="${pageContext.request.contextPath}/img/logout.png" style="height: 60px;">
+		  </a>
 		 
 		<div  class="tcenter" style="width: 75%">
 		           <table class="table table-bordered">
