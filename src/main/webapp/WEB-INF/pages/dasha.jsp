@@ -45,7 +45,12 @@
         </a>
         </td>
         <td><img src="${pageContext.request.contextPath}/img/add-car.png">  </td>
-             <td><img src="${pageContext.request.contextPath}/img/add-car.png">  </td>
+             <td>
+             
+             <a href="${pageContext.request.contextPath}/cars">
+             <img src="${pageContext.request.contextPath}/img/cars.png">
+             </a> 
+              </td>
       </tr>
       <tr>
        <td><img src="${pageContext.request.contextPath}/img/add-car.png">  </td>

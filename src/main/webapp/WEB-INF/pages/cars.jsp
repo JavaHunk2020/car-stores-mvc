@@ -36,7 +36,36 @@
 	margin-right: auto;
 }
 </style>
+<script type="text/javascript">
 
+//https://stackoverflow.com/questions/4459379/preview-an-image-before-it-is-uploaded
+//Code to perview image
+function readURL(input) {
+	  if (input.files && input.files[0]) {
+	    var reader = new FileReader();
+	    reader.onload = function(e) {
+	      $('#blah').attr('src', e.target.result);
+	    }
+	    reader.readAsDataURL(input.files[0]); // convert to base64 string
+	  }
+	}
+
+$(document).ready(function(){
+	    $("#imgInp").change(function() {
+		  readURL(this);
+		});
+});
+
+
+function openModal(rid){
+	$("#updateImageModal").modal("show");
+	//it is setting database unique id inside hidden field
+	$("#rid").val(rid);
+	$("#cphoto").attr("src","loadImage?rid="+rid);
+}
+
+
+</script>
 
 </head>
 <body>
@@ -48,10 +77,12 @@
 	<div  class="container">
 		<b style="color:black;">CARs PAGE</b> 
 	     <hr style="border-top: 5px solid rgba(103,58,183,1);"/>
-	      <h3>${message }</h3>
+	      <marquee scrolldelay="100">
 		<img id="studentImage"  src="${pageContext.request.contextPath}/img/bmw-z4.png" class="semere"  style="height: 100px;display: inline;">
 	<img id="studentImage"  src="${pageContext.request.contextPath}/img/bmw-z4.png" class="semere"  style="height: 100px;display: inline;">
 	<img id="studentImage"  src="${pageContext.request.contextPath}/img/bmw-z4.png" class="semere"  style="height: 100px;display: inline;">
+	</marquee>
+	 <hr style="border-top: 5px solid rgba(103,58,183,1);"/>
 	
 	 <table class="table table-bordered">
     <thead>
@@ -75,7 +106,9 @@
         <td>${item.mfg}</td>
         <td>
          <img src="${pageContext.request.contextPath}/loadImage?rid=${item.id}"  class="zoom" >
+          <a href="javascript:openModal(${item.id});">
           <img src="${pageContext.request.contextPath}/img/edit.png"/>
+          </a>
         </td>
         <td>
         <img src="${pageContext.request.contextPath}/img/edit.png"/>
@@ -86,10 +119,43 @@
    
     </tbody>
   </table>
-	
 	</div>
 
+<!-- The Modal -->
+<div class="modal" id="updateImageModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
 
+      <!-- Modal Header -->
+      
+      <form action="updatePhoto" method="post"  enctype="multipart/form-data">
+       <input type="hidden"  name="id"   id="rid"  class="form-control" />
+      <div class="modal-header">
+        <h4 class="modal-title">Update Photo</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+             <lable>Current Pic : </lable>
+             <img src=""   id="cphoto" style="height: 200px;">
+             <hr/>
+             <input  type="file" id="imgInp"  name="photo"  class="form-control"  style="background-color: #dffffc;"/>
+             <hr/>
+              <img id="blah" src="#" alt="your image"  style="height: 120px;"/>
+             
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+      <button type="submit" class="btn btn-primary">Update Photo</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+      </form>
+
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
