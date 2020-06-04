@@ -24,10 +24,6 @@ import com.cubic.it.cars.entity.CarEntity;
 public class CarController {
 	
 	@Autowired
-	@Qualifier("pkdataSource")
-	private DataSource dataSource;
-	
-	@Autowired
 	private CarDao carDao;
 	
   //	/loadImage ? rid =122
@@ -43,8 +39,6 @@ public class CarController {
 		}
 		outputStream.flush(); //pusing the response
 	}
-	
-	
 	
 	@GetMapping("/cars")
 	public String showCar(Model  model) {
