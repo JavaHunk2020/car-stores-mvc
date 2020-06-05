@@ -26,6 +26,11 @@ public class CarController {
 	@Autowired
 	private CarDao carDao;
 	
+	@GetMapping("/magic")
+	public String uploadImage() {
+		return "202";
+	}
+	
   //	/loadImage ? rid =122
 	@GetMapping("/loadImage")
 	public void loadImage(@RequestParam int rid,HttpServletResponse response) throws IOException {
