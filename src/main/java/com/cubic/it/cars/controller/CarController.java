@@ -52,6 +52,28 @@ public class CarController {
 		return "cars";
 	}
 	
+	@GetMapping("/pcars")
+	public String pshowCar(@RequestParam(required=false) Integer page,Model  model) {
+		int maxRecord=3;
+		int startPage=1;
+		if(page==null || page<=0) {
+			page=1;
+		}
+		else if(page>1) {
+			startPage=((page-1)*maxRecord)+1;  // 1, 4 , 7 ,
+			                                                                 //0,3,6 -db index
+		}
+		List<CarEntity> carLista=carDao.findByPage(startPage,maxRecord);
+		int totalCount=carDao.findAllCount();
+		model.addAttribute("maxRecord",maxRecord);
+		model.addAttribute("cpage",page);
+		
+		model.addAttribute("startPage",startPage);
+		model.addAttribute("totalCount",totalCount);
+		model.addAttribute("carLista",carLista);
+		return "pcars";
+	}
+	
 	
 	@GetMapping("/addCar")
 	public String addCarPage() {

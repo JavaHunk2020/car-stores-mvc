@@ -10,4 +10,6 @@ public interface CarDao {
 	List<CarEntity> findAll();
 	void updatePhoto(CarEntity carEntity) throws IOException;
 	void save(CarEntity carEntity) throws IOException;
+	int findAllCount();
+	List<CarEntity> findByPage(int startPage, int pageSize);
 }

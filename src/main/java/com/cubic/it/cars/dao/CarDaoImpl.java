@@ -34,6 +34,27 @@ public class CarDaoImpl  implements CarDao {
 		return imaga;
 	}
 	
+	
+	@Override
+	public int findAllCount() {
+		JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
+		String sql="select  count(*) from cars_tbl";
+		int count=jdbcTemplate.queryForObject(sql, Integer.class);
+		return count;
+	}
+	
+	
+	@Override
+	public List<CarEntity> findByPage(int startPage,int pageSize) { //1 , 4   = 1,2,3,4
+		JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
+				//0 ,5
+				//5,5
+				//10,5
+ 	   String sql = "select  cid as id,color,model,price,mfg,description,doe from cars_tbl order by cid desc limit "+(startPage-1)+","+pageSize;
+		List<CarEntity> carLista=jdbcTemplate.query(sql, new BeanPropertyRowMapper(CarEntity.class));
+		return carLista;
+	}
+	
 	@Override
 	public List<CarEntity> findAll() {
 		JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
