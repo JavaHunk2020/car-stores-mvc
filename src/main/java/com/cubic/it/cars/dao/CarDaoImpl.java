@@ -75,9 +75,13 @@ public class CarDaoImpl  implements CarDao {
 	
 	@Override
 	public void save(CarEntity carEntity) throws IOException {
-		byte[] image=carEntity.getPhoto().getBytes();
+		
+		byte[] image=null;
+		if(carEntity.getPhoto()!=null) {
+		     image=carEntity.getPhoto().getBytes();
+		     carEntity.setFilename(carEntity.getPhoto().getName());
+		}
 		carEntity.setImage(image);
-		carEntity.setFilename(carEntity.getPhoto().getName());
 		carEntity.setDoe(new Timestamp(new Date().getTime()));
 		carEntity.setDom(new Timestamp(new Date().getTime()));
 		System.out.println(carEntity);
