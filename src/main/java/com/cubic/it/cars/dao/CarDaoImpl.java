@@ -1,6 +1,10 @@
 package com.cubic.it.cars.dao;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Date;
@@ -18,6 +22,8 @@ import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.stereotype.Repository;
 
 import com.cubic.it.cars.entity.CarEntity;
+import com.cubic.it.cars.entity.UserEntity;
+import com.cubic.it.utils.SQLConnUtil;
 
 @Repository
 public class CarDaoImpl  implements CarDao {
@@ -25,6 +31,18 @@ public class CarDaoImpl  implements CarDao {
 	@Autowired
 	@Qualifier("pkdataSource")
 	private DataSource dataSource;
+	
+	@Override
+	public UserEntity validateUser(String username,String password) {
+			JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
+			String sql="select uid,userid,password,name,email,mobile,salutation,image,createdate,role from users_tbl where userid=? and password= ?";	
+			List<UserEntity> list=jdbcTemplate.query(sql, new Object[] {username,password},new BeanPropertyRowMapper(UserEntity.class));
+			if(list.size()==1) {
+				return list.get(0);
+			}else {
+				return null;
+			}
+	}
 	
 	@Override
 	public byte[] loadImage(int rid) {

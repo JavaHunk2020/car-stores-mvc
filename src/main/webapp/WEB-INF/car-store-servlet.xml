@@ -18,7 +18,10 @@
 	<mvc:annotation-driven/>
 		<!-- Specify the package name where model will reside -->
 	<context:component-scan base-package="com.cubic.it.cars.controller"/>
+	<context:component-scan base-package="com.cubic.it.cars.json.controller;"/>
 	<context:component-scan base-package="com.cubic.it.cars.dao"/>
+	<context:component-scan base-package="com.cubic.it.cars.service"/>
+	
 		
 	  <!-- the mvc resources tag does the magic -->
  <mvc:resources mapping="/img/**" location="/img/" />

@@ -65,6 +65,18 @@ function openModal(rid){
 }
 
 
+
+function openPriceModal(rid){
+	$("#showPricesModal").modal("show");
+	//it is setting database unique id inside hidden field
+	$("#pcphoto").attr("src","loadImage?rid="+rid);
+}
+
+
+
+
+
+
 </script>
 
 </head>
@@ -105,7 +117,11 @@ function openModal(rid){
     <tbody>
     <hero:forEach  items="${carLista}"  var="item">
       <tr>
-        <td>${item.id}</td>
+        <td>${item.id}
+            <a href="javascript:openPriceModal(${item.id});">
+          <img src="${pageContext.request.contextPath}/img/details.png"/>
+          </a>
+        </td>
         <td>${item.color}</td>
         <td>${item.model}</td>
           <td>${item.price}</td>
@@ -131,9 +147,7 @@ function openModal(rid){
 <div class="modal" id="updateImageModal">
   <div class="modal-dialog">
     <div class="modal-content">
-
       <!-- Modal Header -->
-      
       <form action="updatePhoto" method="post"  enctype="multipart/form-data">
        <input type="hidden"  name="id"   id="rid"  class="form-control" />
       <div class="modal-header">
@@ -156,6 +170,57 @@ function openModal(rid){
       <div class="modal-footer">
       <button type="submit" class="btn btn-primary">Update Photo</button>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="showPricesModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <form action="updatePhoto" method="post"  enctype="multipart/form-data">
+       <input type="hidden"  name="id"   id="rid"  class="form-control" />
+      <div class="modal-header">
+        <h4 class="modal-title">Car Price List</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+             <lable>Car Pic : </lable>
+             <img src=""   id="pcphoto" style="height: 200px;">
+             <hr/>
+              <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Sno</th>
+        <th>Price</th>
+        <th>DOE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+      		<td>1</td>
+      		<td>23$</td>
+      		<td>12-May-2020</td>
+      </tr>
+      <tr>
+      		<td>1</td>
+      		<td>43$</td>
+      		<td>14-May-2020</td>
+      </tr>
+      </tbody>
+      </table>
+      
+             
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
       </div>
       </form>
 

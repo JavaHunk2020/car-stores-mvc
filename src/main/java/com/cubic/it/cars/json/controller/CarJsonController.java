@@ -1,4 +1,4 @@
-package com.cubic.it.cars.controller;
+package com.cubic.it.cars.json.controller;
 
 import java.io.IOException;
 import java.util.List;
