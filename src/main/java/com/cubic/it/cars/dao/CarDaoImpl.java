@@ -20,6 +20,7 @@ import org.springframework.jdbc.core.support.SqlLobValue;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cubic.it.cars.entity.CarEntity;
 import com.cubic.it.cars.entity.UserEntity;
@@ -83,15 +84,23 @@ public class CarDaoImpl  implements CarDao {
 	
 	@Override
 	public void updatePhoto(CarEntity carEntity) throws IOException {
-		String sql="update  cars_tbl set photo=? where cid=?";
-		LobHandler lobHandler = new DefaultLobHandler();
-		SqlLobValue lobValue=new SqlLobValue(carEntity.getPhoto().getBytes(),lobHandler);
 		JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
-		jdbcTemplate.update(sql,new Object[] {lobValue,carEntity.getId()},new int[] {Types.BLOB,
-				Types.INTEGER});
+		
+		if(carEntity.getPhoto()!=null && carEntity.getPhoto().getBytes().length>0) {
+			String sql="update  cars_tbl set photo=? where cid=?";
+			LobHandler lobHandler = new DefaultLobHandler();
+			SqlLobValue lobValue=new SqlLobValue(carEntity.getPhoto().getBytes(),lobHandler);
+			jdbcTemplate.update(sql,new Object[] {lobValue,carEntity.getId()},new int[] {Types.BLOB,
+					Types.INTEGER});
+		}
+		
+		String sql2="insert into cars_price_tbl(cid,price,doe) values(?,?,?)";
+		jdbcTemplate.update(sql2,new Object[] {carEntity.getId(),carEntity.getPrice()+"$",new Timestamp(new Date().getTime())});
+	
 	}
 	
 	@Override
+	@Transactional
 	public void save(CarEntity carEntity) throws IOException {
 		
 		byte[] image=null;
@@ -108,10 +117,17 @@ public class CarDaoImpl  implements CarDao {
 		JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
 		Object[] data= {carEntity.getColor(),carEntity.getModel(),carEntity.getPrice(),carEntity.getMfg(),
 				lobValue,carEntity.getDescription(),new Timestamp(new Date().getTime())};
+		
 		String sql="insert into cars_tbl(color,model,price,mfg,photo,description,doe) values(?,?,?,?,?,?,?)";
 		jdbcTemplate.update(sql,data,
 				new int[] {Types.VARCHAR, Types.INTEGER,Types.DOUBLE,
 						Types.VARCHAR,Types.BLOB,Types.VARCHAR,Types.TIMESTAMP});
+
+		String sqlmaxcid="select max(cid) from cars_tbl";
+		int cid=jdbcTemplate.queryForObject(sqlmaxcid, Integer.class);
+		
+		String sql2="insert into cars_price_tbl(cid,price,doe) values(?,?,?)";
+		jdbcTemplate.update(sql2,new Object[] {cid,carEntity.getPrice()+"$",new Timestamp(new Date().getTime())});
 		
 	}
 	

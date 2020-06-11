@@ -53,8 +53,8 @@ public class AuthController {
 		String next="review";
 		UserDTO userDTO=carService.validateUser(username, password);
 			if(userDTO!=null)  {
-			  	model.addAttribute("pdata", entity);
-				   session.setAttribute("userData", entity);
+			  	model.addAttribute("pdata", userDTO);
+				   session.setAttribute("userData", userDTO);
 			}	 else {
 				 model.addAttribute("message", "Sorry usename and password are not correct!");
 				next="login";

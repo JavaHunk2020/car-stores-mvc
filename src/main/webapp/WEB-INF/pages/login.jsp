@@ -50,7 +50,7 @@
 		            <input type="password" name="password" class="form-control" onkeyup="clearMessage();">
 		             <br/>
 		<button type="button" class="btn btn-primary"  onclick="validateAuth();">Sign In</button>
-		<a href="register.jsp"><button type="button" class="btn btn-info">Sign Up</button></a>
+		<a href="${pageContext.request.contextPath}/addCar"><button type="button" class="btn btn-info">Sign Up</button></a>
 		</div>
 		</form>
 	</div>

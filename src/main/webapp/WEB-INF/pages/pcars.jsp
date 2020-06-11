@@ -67,15 +67,35 @@ function openModal(rid){
 
 
 function openPriceModal(rid){
+	
+	//below code is fetching price data for a particular as a JSON
+	const options = {
+			  method: 'GET',
+			  headers: {
+			    'Content-Type': 'application/json',
+			    'Accept': 'application/json'
+			  }
+			};
+	
+	 fetch('v3/car/prices?cid='+rid, options)
+	  .then(res => res.json())
+	  .then(data => {
+		  	console.log(data); //data array of JavaScript object
+		  	var htmlContent="";
+		  	for(var x=0;x<data.length;x++) {
+		  		   var rowdata=data[x];
+		  		 htmlContent=htmlContent+'<tr>';
+		  		 htmlContent=htmlContent+'<td>'+(x+1)+'</td>';
+		  		 htmlContent=htmlContent+'<td>'+rowdata.price+'</td>';
+		  		 htmlContent=htmlContent+'<td>'+rowdata.doe+'</td>';
+		  		 htmlContent=htmlContent+'</tr>';
+		  	}
+		  	$("#modelData").html(htmlContent);
+		});
 	$("#showPricesModal").modal("show");
 	//it is setting database unique id inside hidden field
 	$("#pcphoto").attr("src","loadImage?rid="+rid);
 }
-
-
-
-
-
 
 </script>
 
@@ -159,6 +179,8 @@ function openPriceModal(rid){
       <div class="modal-body">
              <lable>Current Pic : </lable>
              <img src=""   id="cphoto" style="height: 200px;">
+              <lable>New Price: </lable>
+             <input  type="text"    name="price"  class="form-control"  style="background-color: #dffffc;"/>
              <hr/>
              <input  type="file" id="imgInp"  name="photo"  class="form-control"  style="background-color: #dffffc;"/>
              <hr/>
@@ -201,17 +223,8 @@ function openPriceModal(rid){
         <th>DOE</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-      		<td>1</td>
-      		<td>23$</td>
-      		<td>12-May-2020</td>
-      </tr>
-      <tr>
-      		<td>1</td>
-      		<td>43$</td>
-      		<td>14-May-2020</td>
-      </tr>
+    <tbody id="modelData">
+     
       </tbody>
       </table>
       

@@ -81,7 +81,7 @@ public class CarController {
 	@PostMapping("/updatePhoto")
 	public String updatePhotoOnly(@ModelAttribute CarDTO carDTO) throws IOException {
 		carService.updatePhoto(carDTO);
-		return "redirect:/cars";
+		return "redirect:/pcars";
 	}
 	
 	@PostMapping("/addCar")

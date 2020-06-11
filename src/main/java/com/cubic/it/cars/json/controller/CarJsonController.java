@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cubic.it.cars.controller.vo.CarPriceDTO;
 import com.cubic.it.cars.dao.CarDao;
 import com.cubic.it.cars.entity.CarEntity;
 
@@ -32,6 +34,16 @@ public class CarJsonController {
 	@Autowired
 	@Qualifier("pkdataSource")
 	private DataSource dataSource;
+	
+	
+	@GetMapping("car/prices")
+	public List<CarPriceDTO>  carPrices(@RequestParam int cid){
+		//	show all remaining cars after deleting it
+				JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
+				String fsql="select  cid ,price,doe from cars_price_tbl where cid = "+cid;
+				List<CarPriceDTO> carPriceDTOs=jdbcTemplate.query(fsql, new BeanPropertyRowMapper(CarPriceDTO.class));
+				return carPriceDTOs;
+	}
 	
 	//http://localhost:9999/car-stores-mvc/v3/cars/1
 	@DeleteMapping("/cars/{cid}")

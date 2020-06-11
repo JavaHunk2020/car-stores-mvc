@@ -2,6 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans     
@@ -9,8 +10,8 @@
         http://www.springframework.org/schema/mvc 
         http://www.springframework.org/schema/mvc/spring-mvc.xsd
         http://www.springframework.org/schema/context 
-        http://www.springframework.org/schema/context/spring-context.xsd">
-        
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx   http://www.springframework.org/schema/tx/spring-tx.xsd">
          
     <!-- Enabling all the spring mvc features
     like enabling annotation,JSON,XML reponse, validation etc
@@ -46,5 +47,17 @@
 		<property name="username" value="root" />
 		<property name="password" value="mysql@1234" />
 	</bean>
+	
+	<!-- Creating TransactionManager Bean, since JDBC we are creating of type 
+		DataSourceTransactionManager -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="pkdataSource" />
+	</bean>
+	
+	<!-- Enable Annotation based Declarative Transaction Management
+	@Transactional
+	 -->
+	<tx:annotation-driven proxy-target-class="true"	transaction-manager="transactionManager" />
         
       </beans>  
