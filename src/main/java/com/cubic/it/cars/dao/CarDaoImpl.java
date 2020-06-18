@@ -1,10 +1,6 @@
 package com.cubic.it.cars.dao;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Date;
@@ -24,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cubic.it.cars.entity.CarEntity;
 import com.cubic.it.cars.entity.UserEntity;
-import com.cubic.it.utils.SQLConnUtil;
 
 @Repository
 public class CarDaoImpl  implements CarDao {

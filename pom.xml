@@ -53,6 +53,12 @@
 			<version>5.2.3.RELEASE</version>
 		</dependency>
 		
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-actuator</artifactId>
+    <version>1.3.5.RELEASE</version>
+</dependency>
+		
 		<!-- JSTL -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
