@@ -2,6 +2,15 @@ package com.cubic.it.cars.entity;
 
 import java.sql.Timestamp;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="users_tbl")
 public class UserEntity {
 	private int uid;
 	private String userid;
@@ -34,12 +43,17 @@ public class UserEntity {
 	public void setCreateDate(Timestamp createDate) {
 		this.createDate = createDate;
 	}
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public int getUid() {
 		return uid;
 	}
 	public void setUid(int uid) {
 		this.uid = uid;
 	}
+	
+	@Column(length=50)
 	public String getUserid() {
 		return userid;
 	}
@@ -48,6 +62,7 @@ public class UserEntity {
 		this.userid = userid;
 	}
 
+	@Column(length=30)
 	public String getPassword() {
 		return password;
 	}
@@ -56,6 +71,7 @@ public class UserEntity {
 		this.password = password;
 	}
 
+	@Column(length=200)
 	public String getEmail() {
 		return email;
 	}
@@ -64,6 +80,7 @@ public class UserEntity {
 		this.email = email;
 	}
 
+	@Column(length=100)
 	public String getName() {
 		return name;
 	}
@@ -80,6 +97,7 @@ public class UserEntity {
 		this.mobile = mobile;
 	}
 
+@Column(length=500)
 	public String getImage() {
 		return image;
 	}
@@ -88,6 +106,8 @@ public class UserEntity {
 		this.image = image;
 	}
 
+	
+	@Column(length=4)
 	public String getSalutation() {
 		return salutation;
 	}
@@ -101,6 +121,7 @@ public class UserEntity {
 		this.role = role;
 	}
 	
+	@Column(length=20)
 	public String getRole() {
 		return role;
 	}

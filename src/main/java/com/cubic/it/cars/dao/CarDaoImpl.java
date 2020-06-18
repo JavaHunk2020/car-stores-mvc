@@ -1,20 +1,17 @@
 package com.cubic.it.cars.dao;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Date;
 import java.util.List;
 
-import javax.sql.DataSource;
+import javax.persistence.TypedQuery;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.support.SqlLobValue;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
@@ -23,79 +20,84 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cubic.it.cars.entity.CarEntity;
+import com.cubic.it.cars.entity.CarPriceEntity;
 import com.cubic.it.cars.entity.UserEntity;
-import com.cubic.it.utils.SQLConnUtil;
 
+
+//<tx:annotation-driven proxy-target-class="true"	transaction-manager="transactionManager" />
 @Repository
+//below is mandatory 
+@Transactional
 public class CarDaoImpl  implements CarDao {
 	
 	@Autowired
-	@Qualifier("pkdataSource")
-	private DataSource dataSource;
+	private SessionFactory sessionFactory;
+	
+	
+	private Session getSession(){
+        return sessionFactory.getCurrentSession();
+   }
+
 	
 	@Override
 	public UserEntity validateUser(String username,String password) {
-			JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
-			String sql="select uid,userid,password,name,email,mobile,salutation,image,createdate,role from users_tbl where userid=? and password= ?";	
-			List<UserEntity> list=jdbcTemplate.query(sql, new Object[] {username,password},new BeanPropertyRowMapper(UserEntity.class));
-			if(list.size()==1) {
-				return list.get(0);
-			}else {
-				return null;
-			}
+		TypedQuery<UserEntity> query=getSession().createQuery("from UserEntity pt where pt.userid=:pusername and pt.password=:ppassword"); //HQL
+		query.setParameter("pusername", username);
+		query.setParameter("ppassword", password);
+		UserEntity  profileEntity=null;
+		 try {
+			 profileEntity=query.getSingleResult();
+		 }catch (Exception e) {
+			 //e.printStackTrace();
+		}
+		return profileEntity;
 	}
 	
 	@Override
 	public byte[] loadImage(int rid) {
-		JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
-		String sql="select  photo from cars_tbl where cid = "+rid;
-		byte[] imaga=jdbcTemplate.queryForObject(sql, byte[].class);
-		return imaga;
+		CarEntity carEntity=this.getSession().get(CarEntity.class, rid);
+		return carEntity.getImage();
 	}
 	
 	
 	@Override
 	public int findAllCount() {
-		JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
-		String sql="select  count(*) from cars_tbl";
-		int count=jdbcTemplate.queryForObject(sql, Integer.class);
-		return count;
+		Query query=this.getSession().createQuery("from CarEntity");
+		List<CarEntity> listCars= query.list();
+		return listCars.size();
 	}
 	
 	
 	@Override
 	public List<CarEntity> findByPage(int startPage,int pageSize) { //1 , 4   = 1,2,3,4
-		JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
+	/*	JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
 				//0 ,5
 				//5,5
 				//10,5
  	   String sql = "select  cid as id,color,model,price,mfg,description,doe from cars_tbl order by cid desc limit "+(startPage-1)+","+pageSize;
-		List<CarEntity> carLista=jdbcTemplate.query(sql, new BeanPropertyRowMapper(CarEntity.class));
-		return carLista;
+		List<CarEntity> carLista=jdbcTemplate.query(sql, new BeanPropertyRowMapper(CarEntity.class));*/
+		return null;
 	}
 	
 	@Override
 	public List<CarEntity> findAll() {
-		JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
-		String sql="select  cid as id,color,model,price,mfg,description,doe from cars_tbl";
-		List<CarEntity> carLista=jdbcTemplate.query(sql, new BeanPropertyRowMapper(CarEntity.class));
-		return carLista;
+		Query query=this.getSession().createQuery("from CarEntity");
+		return  query.list();
 	}
 	
 	@Override
 	public void updatePhoto(CarEntity carEntity) throws IOException {
-		JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
 		
 		if(carEntity.getPhoto()!=null && carEntity.getPhoto().getBytes().length>0) {
-			String sql="update  cars_tbl set photo=? where cid=?";
-			LobHandler lobHandler = new DefaultLobHandler();
-			SqlLobValue lobValue=new SqlLobValue(carEntity.getPhoto().getBytes(),lobHandler);
-			jdbcTemplate.update(sql,new Object[] {lobValue,carEntity.getId()},new int[] {Types.BLOB,
-					Types.INTEGER});
+			CarEntity scarEntity=this.getSession().get(CarEntity.class,carEntity.getId());
+			scarEntity.setImage(carEntity.getPhoto().getBytes());
 		}
 		
-		String sql2="insert into cars_price_tbl(cid,price,doe) values(?,?,?)";
-		jdbcTemplate.update(sql2,new Object[] {carEntity.getId(),carEntity.getPrice()+"$",new Timestamp(new Date().getTime())});
+		CarPriceEntity carPriceEntity=new CarPriceEntity();
+		carPriceEntity.setCid(carEntity.getId());
+		carPriceEntity.setPrice(carEntity.getPrice()+"$");
+		carPriceEntity.setDoe(new Timestamp(new Date().getTime()));
+		this.getSession().save(carPriceEntity);
 	
 	}
 	
@@ -111,24 +113,13 @@ public class CarDaoImpl  implements CarDao {
 		carEntity.setImage(image);
 		carEntity.setDoe(new Timestamp(new Date().getTime()));
 		carEntity.setDom(new Timestamp(new Date().getTime()));
-		System.out.println(carEntity);
-		LobHandler lobHandler = new DefaultLobHandler();
-		SqlLobValue lobValue=new SqlLobValue(carEntity.getImage(),lobHandler);
-		JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
-		Object[] data= {carEntity.getColor(),carEntity.getModel(),carEntity.getPrice(),carEntity.getMfg(),
-				lobValue,carEntity.getDescription(),new Timestamp(new Date().getTime())};
+		int currentPrimary=(Integer)this.getSession().save(carEntity);
 		
-		String sql="insert into cars_tbl(color,model,price,mfg,photo,description,doe) values(?,?,?,?,?,?,?)";
-		jdbcTemplate.update(sql,data,
-				new int[] {Types.VARCHAR, Types.INTEGER,Types.DOUBLE,
-						Types.VARCHAR,Types.BLOB,Types.VARCHAR,Types.TIMESTAMP});
-
-		String sqlmaxcid="select max(cid) from cars_tbl";
-		int cid=jdbcTemplate.queryForObject(sqlmaxcid, Integer.class);
-		
-		String sql2="insert into cars_price_tbl(cid,price,doe) values(?,?,?)";
-		jdbcTemplate.update(sql2,new Object[] {cid,carEntity.getPrice()+"$",new Timestamp(new Date().getTime())});
-		
+		CarPriceEntity carPriceEntity=new CarPriceEntity();
+		carPriceEntity.setCid(currentPrimary);
+		carPriceEntity.setPrice(carEntity.getPrice()+"$");
+		carPriceEntity.setDoe(new Timestamp(new Date().getTime()));
+		this.getSession().save(carPriceEntity);
 	}
 	
 
