@@ -2,7 +2,6 @@ package com.cubic.it.cars.dao;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.Date;
 import java.util.List;
 
@@ -12,10 +11,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.support.SqlLobValue;
-import org.springframework.jdbc.support.lob.DefaultLobHandler;
-import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,11 +28,9 @@ public class CarDaoImpl  implements CarDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 	
-	
 	private Session getSession(){
         return sessionFactory.getCurrentSession();
    }
-
 	
 	@Override
 	public UserEntity validateUser(String username,String password) {
@@ -55,6 +48,7 @@ public class CarDaoImpl  implements CarDao {
 	
 	@Override
 	public byte[] loadImage(int rid) {
+		//if you know primary key of entity then you can load it;s data
 		CarEntity carEntity=this.getSession().get(CarEntity.class, rid);
 		return carEntity.getImage();
 	}
@@ -67,16 +61,21 @@ public class CarDaoImpl  implements CarDao {
 		return listCars.size();
 	}
 	
+	@Override
+	public void delete(int cid) {
+		Session tsession=this.getSession();
+		CarEntity carEntity=tsession.get(CarEntity.class, cid);
+		tsession.delete(carEntity);
+	}
 	
+	//9:30 PM -AWS Class  -11:00 PM  -Saturday & Sunday - AWS - 
 	@Override
 	public List<CarEntity> findByPage(int startPage,int pageSize) { //1 , 4   = 1,2,3,4
-	/*	JdbcTemplate jdbcTemplate=new JdbcTemplate(dataSource);
-				//0 ,5
-				//5,5
-				//10,5
- 	   String sql = "select  cid as id,color,model,price,mfg,description,doe from cars_tbl order by cid desc limit "+(startPage-1)+","+pageSize;
-		List<CarEntity> carLista=jdbcTemplate.query(sql, new BeanPropertyRowMapper(CarEntity.class));*/
-		return null;
+		Query query = this.getSession().createQuery("From CarEntity");
+		query.setFirstResult(startPage-1); //starts with zero ->> that's why minus 1
+		query.setMaxResults(pageSize);
+		List<CarEntity> carLista = query.list();
+		return carLista;
 	}
 	
 	@Override
@@ -87,18 +86,11 @@ public class CarDaoImpl  implements CarDao {
 	
 	@Override
 	public void updatePhoto(CarEntity carEntity) throws IOException {
-		
 		if(carEntity.getPhoto()!=null && carEntity.getPhoto().getBytes().length>0) {
+			//entity is loaded inside persistence context
 			CarEntity scarEntity=this.getSession().get(CarEntity.class,carEntity.getId());
 			scarEntity.setImage(carEntity.getPhoto().getBytes());
 		}
-		
-		CarPriceEntity carPriceEntity=new CarPriceEntity();
-		carPriceEntity.setCid(carEntity.getId());
-		carPriceEntity.setPrice(carEntity.getPrice()+"$");
-		carPriceEntity.setDoe(new Timestamp(new Date().getTime()));
-		this.getSession().save(carPriceEntity);
-	
 	}
 	
 	@Override

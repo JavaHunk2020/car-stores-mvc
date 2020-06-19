@@ -14,4 +14,5 @@ public interface CarDao {
 	int findAllCount();
 	List<CarEntity> findByPage(int startPage, int pageSize);
 	UserEntity validateUser(String username, String password);
+	void delete(int cid);
 }
